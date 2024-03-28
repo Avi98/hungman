@@ -36,12 +36,11 @@ class RealTimeConnection {
     this.gameState = gameState;
   }
 
-  private attachEventListener(eventType: EventType): Promise<IGameResponse> {
-    return new Promise((res) => {
-      setTimeout(() => {
-        this.socket?.on(eventType, res);
-      }, 0);
-    });
+  private attachEventListener<T extends (...args: any[]) => any>(
+    eventType: EventType,
+    cb: T
+  ) {
+    return this.socket?.on(eventType, cb);
   }
 
   private joinRoomCreateRoom = (roomInfo: {
@@ -92,8 +91,8 @@ class RealTimeConnection {
     });
   }
 
-  async listenLetterSelected() {
-    return await this.attachEventListener("SELECTED_LETTER");
+  onSelectedLetter(cb: any): any {
+    return this.attachEventListener("SELECTED_LETTER", cb);
   }
 
   disconnect() {
