@@ -10,7 +10,6 @@ class RealtimeRoomStore {
 
   createNewRoom(room: { roomId: string; word: string; roomName: string }) {
     try {
-      // const roomId = generateUUID();
       const newRoom = new Room();
 
       newRoom.setWord(room.word);
@@ -54,8 +53,6 @@ class RealtimeRoomStore {
 
   letterSelected(roomId: string, letter: string) {
     try {
-      console.log({ roomId, letter, room: this.room });
-
       const currRoom = this.getRoomById(roomId);
       if (!currRoom) throw new Error('No room found');
 
