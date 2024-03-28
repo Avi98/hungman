@@ -29,14 +29,16 @@ class Room {
   private hasSelectedCorrectLetter(letter: string, guessWord: string) {
     if (!guessWord) return;
 
-    return guessWord.split(',').includes(letter);
+    return guessWord.split('').includes(letter);
   }
 
   private getRemainingLetters = (
-    selectedLetter: string,
+    selectedLetters: string[],
     allLetters: string[],
   ) => {
-    return allLetters.filter((letter) => selectedLetter !== letter);
+    return allLetters.filter(
+      (allLetter) => !selectedLetters.includes(allLetter),
+    );
   };
 
   private updateSuccessStateLetter = (
@@ -45,9 +47,11 @@ class Room {
   ) => {
     gameState.isCorrect = true;
     gameState.correctSelectedLetters.push(letter);
+    gameState.selectedLetters.push(letter);
+    gameState.remainingLetters = gameState.remainingLetters;
     gameState.remainingLetters = this.getRemainingLetters(
-      letter,
-      gameState.remainingLetters,
+      gameState.selectedLetters,
+      gameState.letters,
     );
 
     return gameState;
@@ -56,10 +60,10 @@ class Room {
   private updateFailedStateLetter = (letter: string, gameState: IGameStore) => {
     gameState.isCorrect = false;
     gameState.incorrect += 1;
-    gameState.correctSelectedLetters.push(letter);
+    gameState.selectedLetters.push(letter);
     gameState.remainingLetters = this.getRemainingLetters(
-      letter,
-      gameState.remainingLetters,
+      gameState.selectedLetters,
+      gameState.letters,
     );
 
     return gameState;

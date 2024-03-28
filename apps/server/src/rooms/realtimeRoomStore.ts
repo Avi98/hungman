@@ -54,9 +54,10 @@ class RealtimeRoomStore {
   letterSelected(roomId: string, letter: string) {
     try {
       const currRoom = this.getRoomById(roomId);
+
       if (!currRoom) throw new Error('No room found');
 
-      return currRoom.onSelectLetter(letter);
+      return currRoom.onSelectLetter(letter.toLowerCase());
     } catch (error) {
       throw error;
     }
