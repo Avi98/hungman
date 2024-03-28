@@ -18,22 +18,12 @@ export class RoomEventHandler {
     private realtimeRoom: RealtimeRoomStore,
   ) {}
 
-  static async initializeRoomEventHandler(
-    client: Socket,
-    wordBank: WordBankService,
-  ) {
+  static initializeRoomEventHandler(client: Socket, wordBank: WordBankService) {
     const gameStore = new RealtimeRoomStore();
     const eventHandler = new RoomEventHandler(client, wordBank, gameStore);
 
-    await eventHandler.addRoom();
     return eventHandler;
   }
-
-  private addEventListener = <P>(eventName: EventType): Promise<P> => {
-    return new Promise((res) => {
-      return this.client.on(eventName, (data) => res(data));
-    });
-  };
 
   private sendEvent<P>({ type, payload }: IEventType<P>) {
     this.client.emit(type, payload);
@@ -51,27 +41,23 @@ export class RoomEventHandler {
     }
   }
 
-  private async addRoom() {
+  async addRoom(roomInfo: { roomId: string; roomName: string }) {
     try {
-      this.addEventListener('JOIN_ROOM').then(
-        async (roomInfo: { roomId: string; roomName: string }) => {
-          const word = await this.fetchWord();
+      const word = await this.fetchWord();
 
-          this.currentRoomId = roomInfo.roomId;
+      this.currentRoomId = roomInfo.roomId;
 
-          this.realtimeRoom.createNewRoom({
-            word,
-            roomId: roomInfo.roomId,
-            roomName: roomInfo.roomName,
-          });
+      this.realtimeRoom.createNewRoom({
+        word,
+        roomId: roomInfo.roomId,
+        roomName: roomInfo.roomName,
+      });
 
-          this.client.join(roomInfo.roomId);
-          this.sendEvent({
-            type: 'JOIN_SUCCESS',
-            payload: this.realtimeRoom.getRoomMetadata(roomInfo.roomId),
-          });
-        },
-      );
+      this.client.join(roomInfo.roomId);
+      this.sendEvent({
+        type: 'JOIN_SUCCESS',
+        payload: this.realtimeRoom.getRoomMetadata(roomInfo.roomId),
+      });
     } catch (error) {
       //log error
       throw new Error(error);

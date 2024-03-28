@@ -7,5 +7,6 @@ export interface IGameStore {
   skip: number;
   isCorrect: boolean;
   incorrect: number;
+  correctSelectedLetters: string[];
   gameOver: boolean;
 }

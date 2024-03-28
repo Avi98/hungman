@@ -44,7 +44,7 @@ class RealTimeConnection {
     });
   }
 
-  private joinRoom = (roomInfo: {
+  private joinRoomCreateRoom = (roomInfo: {
     roomId: string;
     roomName: string;
   }): Promise<void> => {
@@ -56,25 +56,23 @@ class RealTimeConnection {
       this.isConnected = true;
       this.roomId = roomInfo.roomId;
 
-      setTimeout(() => {
-        this.socket?.emit("JOIN_ROOM", {
-          roomId: roomInfo.roomId,
-          roomName: roomInfo.roomName,
-        });
-        res();
+      this.socket.emit("JOIN_ROOM", {
+        roomId: roomInfo.roomId,
+        roomName: roomInfo.roomName,
+      });
+      res();
 
-        io.on("JOIN_FAIL", (e) => {
-          this.socket = undefined;
-          this.clientId = "";
-          this.isConnected = false;
+      io.on("JOIN_FAIL", (e) => {
+        this.socket = undefined;
+        this.clientId = "";
+        this.isConnected = false;
 
-          // @TODO: add retry logic here
-          rej({
-            isConnected: false,
-            errorMessage: e,
-          });
+        // @TODO: add retry logic here
+        rej({
+          isConnected: false,
+          errorMessage: e,
         });
-      }, 0);
+      });
     });
   };
 
@@ -89,12 +87,9 @@ class RealTimeConnection {
     roomId: string;
     roomName: string;
   }) {
-    await this.joinRoom({ roomId, roomName })
-      .then(() => this.attachEventListener("JOIN_SUCCESS"))
-      .then(this.setGameState)
-      .catch((e) => {
-        console.error({ ERROR_CONNECTION: e });
-      });
+    await this.joinRoomCreateRoom({ roomId, roomName }).catch((e) => {
+      console.error({ ERROR_CONNECTION: e });
+    });
   }
 
   async listenLetterSelected() {

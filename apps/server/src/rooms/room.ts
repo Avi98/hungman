@@ -12,18 +12,69 @@ class Room {
   private gameState: IGameStore = {
     owner: '',
     word: null,
-    remainingLetters: [...Room.ALL_LETTERS],
     letters: [...Room.ALL_LETTERS],
-    selectedLetters: [],
     skip: 0,
     isCorrect: false,
     incorrect: 0,
     gameOver: false,
+    remainingLetters: [...Room.ALL_LETTERS],
+    selectedLetters: [],
+    correctSelectedLetters: [],
   };
 
   getConnectedUsers() {
     return this.users;
   }
+
+  private hasSelectedCorrectLetter(letter: string, guessWord: string) {
+    if (!guessWord) return;
+
+    return guessWord.split(',').includes(letter);
+  }
+
+  private getRemainingLetters = (
+    selectedLetter: string,
+    allLetters: string[],
+  ) => {
+    return allLetters.filter((letter) => selectedLetter !== letter);
+  };
+
+  private updateSuccessStateLetter = (
+    letter: string,
+    gameState: IGameStore,
+  ) => {
+    gameState.isCorrect = true;
+    gameState.correctSelectedLetters.push(letter);
+    gameState.remainingLetters = this.getRemainingLetters(
+      letter,
+      gameState.remainingLetters,
+    );
+
+    return gameState;
+  };
+
+  private updateFailedStateLetter = (letter: string, gameState: IGameStore) => {
+    gameState.isCorrect = false;
+    gameState.incorrect += 1;
+    gameState.correctSelectedLetters.push(letter);
+    gameState.remainingLetters = this.getRemainingLetters(
+      letter,
+      gameState.remainingLetters,
+    );
+
+    return gameState;
+  };
+
+  private updateStateOnSelect = (letter: string, gameState: IGameStore) => {
+    let updateGameState: IGameStore;
+
+    if (this.hasSelectedCorrectLetter(letter, gameState.word)) {
+      updateGameState = this.updateSuccessStateLetter(letter, gameState);
+    } else {
+      updateGameState = this.updateFailedStateLetter(letter, gameState);
+    }
+    return updateGameState;
+  };
 
   onSelectLetter(letter: string) {
     if (this.gameState.gameOver) throw new Error('Game Over');
@@ -31,24 +82,17 @@ class Room {
     if (this.gameState.incorrect === Room.MAX_CHANCE)
       throw new Error('Reached max chances Game Over');
 
-    const gameLetters = this.gameState.letters;
+    const gameState = this.updateStateOnSelect(letter, this.gameState);
 
-    this.gameState.selectedLetters.push(letter);
-    this.gameState.letters = gameLetters.filter(
-      (letters) => letters !== letter,
-    );
-
-    return this.gameState;
+    return gameState;
   }
-
-  whoseTurn() {}
 
   setWord(word) {
     this.gameState.word = word;
   }
 
   get word() {
-    return this.word;
+    return this.gameState.word;
   }
 
   get game() {

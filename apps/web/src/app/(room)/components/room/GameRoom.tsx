@@ -1,10 +1,8 @@
 "use client";
 
-import { useRealTimeConnection } from "../../hooks/use-real-time-connection/use-real-time-connection";
-
 export const GameRoom = () => {
   // const a = useGetCurrentUser();
-  const { currentConnectionId, selectedLetters } = useRealTimeConnection();
+  // const { currentConnectionId, selectedLetters } = useRealTimeConnection();
 
   return (
     <div>
