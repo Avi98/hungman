@@ -1,31 +1,29 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import RealTimeConnection from "./realtime-connection";
 import { assertSocketRef } from "../utils";
-import { SocketRefType } from "../types";
+import { useParams } from "next/navigation";
 
 export const useInitializeConnection = () => {
-  const [isConnected, setIsConnected] = useState(false);
-  const [connectionId, setConnectionId] = useState("");
+  // const [isConnected, setIsConnected] = useState(false);
+  // const [connectionId, setConnectionId] = useState("");
 
-  const socketRef = useRef<SocketRefType | RealTimeConnection>(
-    () => new RealTimeConnection()
-  );
+  const param = useParams();
+  const isConnected = useRef(false);
+  const connectionId = useRef<string | null>(null);
+
+  const socketRef = useRef<RealTimeConnection>(new RealTimeConnection());
 
   const connectToWebSocket = useCallback(async () => {
     if (typeof socketRef.current !== "function") {
+      console.log({ sockerConnectionCalled: 1 });
       await socketRef.current.establishConnection({
-        roomId: String(100),
+        roomId: String(param.roomId),
         roomName: "testRoom",
       });
-      setConnectionId(socketRef.current.getConnectionId() ?? "");
-      setIsConnected(socketRef.current.getIsConnected());
+      connectionId.current = socketRef.current.getConnectionId() ?? "";
+      isConnected.current = socketRef.current.getIsConnected();
     }
-  }, []);
-
-  const attachListener = useCallback(async () => {
-    if (typeof socketRef.current !== "function")
-      await socketRef.current.listenLetterSelect();
-  }, []);
+  }, [param.roomId]);
 
   const disconnectConnection = useCallback(() => {
     if (typeof socketRef.current !== "function") socketRef.current.disconnect();
@@ -35,30 +33,18 @@ export const useInitializeConnection = () => {
     const socket = assertSocketRef(socketRef.current);
     const isConnected = socket.getConnectionId();
 
-    socketRef.current = socket;
-    if (isConnected) return;
-
     connectToWebSocket();
 
     return () => {
       if (isConnected) disconnectConnection();
     };
-  }, [connectToWebSocket, disconnectConnection, setIsConnected]);
-
-  useEffect(() => {
-    attachListener();
-  }, [attachListener]);
-
-  if (socketRef.current instanceof RealTimeConnection)
-    return {
-      isConnected,
-      connectionId,
-      client: socketRef.current as RealTimeConnection,
-    };
+    // This hook is suppose to run only once in
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return {
-    isConnected: false,
-    connectionId: "",
-    client: null,
+    isConnected,
+    connectionId,
+    client: socketRef.current as RealTimeConnection,
   };
 };

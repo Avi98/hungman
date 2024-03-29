@@ -1,24 +1,19 @@
+"use client";
 import { useCallback } from "react";
 import { useInitializeConnection } from "../use-initalize-connection";
 import { useHangmanStore } from "../../../../store/use-hangman-store";
-import { Store } from "../../../../store/defaultState";
+import { useSyncGameListener } from "./use-sync-game-store";
 
-interface IUseRealTimeConnection {
-  currentConnectionId: string | null;
-  selectedLetters: (letter: string) => Promise<void>;
-  gameState: Store["gameState"];
-}
-
-export const useRealTimeConnection = (): IUseRealTimeConnection => {
-  const { updateSelectedLetters, gameState } = useHangmanStore(
-    (state) => state
-  );
+export const useRealTimeConnection = () => {
+  const { gameState } = useHangmanStore((state) => state);
+  console.log({ gameState });
 
   const { client, isConnected, connectionId } = useInitializeConnection();
+  useSyncGameListener(client);
 
   const selectedLetters = useCallback(
-    async (letter: string) => {
-      await client?.letterSelected(letter);
+    (letter: string) => {
+      client.letterSelected(letter);
     },
     [client]
   );

@@ -2,7 +2,7 @@ import { env } from "../../../../utils/env";
 import { SocketRefType } from "../types";
 import RealTimeConnection from "../use-initalize-connection/realtime-connection";
 
-const LOCAL_FALLBACK_URL = "ws://localhost:3030";
+const LOCAL_FALLBACK_URL = env.BE_BASE_WS_URL;
 
 export const getSocketBaseUrl = () => {
   try {

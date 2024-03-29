@@ -13,7 +13,7 @@ const defaultState = {
     ],
   },
   gameState: {
-    owner: {},
+    owner: "",
     remainingLetters: [""],
     isChoosing: false,
     guessWord: "",

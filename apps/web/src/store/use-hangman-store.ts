@@ -4,6 +4,7 @@ import initialState, { Store } from "./defaultState";
 type HangmanStoreType = Store & {
   updateSelectedLetters: (letters: string[]) => void;
   addNewUser: (userInfo: any) => void;
+  setGameState: (gameState: Store["gameState"]) => void;
 };
 
 export const useHangmanStore = create<HangmanStoreType>((set) => ({
@@ -18,12 +19,6 @@ export const useHangmanStore = create<HangmanStoreType>((set) => ({
       },
     })),
 
-  // setGameState: (gameState: Store["gameState"]) =>
-  //   set((state: Store) => ({
-  //     ...state,
-  //     gameState,
-  //   })),
-
   updateSelectedLetters: (updateSelectedLetters: string[]) =>
     set((state: Store) => ({
       ...state,
@@ -31,5 +26,11 @@ export const useHangmanStore = create<HangmanStoreType>((set) => ({
         ...state.gameState,
         selectedState: updateSelectedLetters,
       },
+    })),
+
+  setGameState: (gameState: Store["gameState"]) =>
+    set((state: Store) => ({
+      ...state,
+      gameState,
     })),
 }));

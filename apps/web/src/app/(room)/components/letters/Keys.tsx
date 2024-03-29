@@ -4,35 +4,44 @@ import { Keys } from "@repo/ui";
 import { KeysWrapper, LastRow } from "./style";
 import { useRealTimeConnection } from "../../hooks/use-real-time-connection/use-real-time-connection";
 
-const letters = "abcdefghijklmnopqrstuvwxyz".toUpperCase().split("");
+const letters = "abcdefghijklmnopqrstuvwxyz".toLowerCase().split("");
 
 export const AllLetters = () => {
   const {
     selectedLetters: updatedSelectedLetters,
-    gameState: { correctSelectedLetters, wrongSelectedLetters },
+    gameState: { selectedLetters, guessWord },
   } = useRealTimeConnection();
+
   return (
     <KeysWrapper>
       {letters.slice(0, 20).map((l) => (
         <Keys
           key={l}
-          letter={l}
+          letter={l.toUpperCase()}
           onClick={updatedSelectedLetters}
-          isRightLetter={false}
-          isWrongLetter={false}
+          isRightLetter={Boolean(
+            selectedLetters.includes(l.toLowerCase()) &&
+              guessWord.split("").includes(l.toLowerCase())
+          )}
+          isWrongLetter={Boolean(
+            selectedLetters.includes(l.toLowerCase()) &&
+              !guessWord.split("").includes(l.toLowerCase())
+          )}
         />
       ))}
       <LastRow />
-      {letters.slice(-6).map((letter) => (
+      {letters.slice(-6).map((l) => (
         <Keys
-          key={letter}
-          letter={letter}
+          key={l}
+          letter={l.toUpperCase()}
           onClick={updatedSelectedLetters}
-          isRightLetter={correctSelectedLetters.includes(
-            letter as (typeof correctSelectedLetters)[number]
+          isRightLetter={Boolean(
+            selectedLetters.includes(l.toLowerCase()) &&
+              guessWord.split("").includes(l.toLowerCase())
           )}
-          isWrongLetter={wrongSelectedLetters.includes(
-            letter as (typeof correctSelectedLetters)[number]
+          isWrongLetter={Boolean(
+            selectedLetters.includes(l.toLowerCase()) &&
+              !guessWord.split("").includes(l.toLowerCase())
           )}
         />
       ))}

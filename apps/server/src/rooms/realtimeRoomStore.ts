@@ -10,14 +10,12 @@ class RealtimeRoomStore {
 
   createNewRoom(room: { roomId: string; word: string; roomName: string }) {
     try {
-      // const roomId = generateUUID();
       const newRoom = new Room();
 
       newRoom.setWord(room.word);
       newRoom.setName(room.roomName);
 
       this.room.set(room.roomId, newRoom);
-      console.log({ room: this.room });
     } catch (error) {
       throw new Error('Failed to create room');
     }
@@ -55,12 +53,11 @@ class RealtimeRoomStore {
 
   letterSelected(roomId: string, letter: string) {
     try {
-      console.log({ roomId, letter, room: this.room });
-
       const currRoom = this.getRoomById(roomId);
+
       if (!currRoom) throw new Error('No room found');
 
-      return currRoom.onSelectLetter(letter);
+      return currRoom.onSelectLetter(letter.toLowerCase());
     } catch (error) {
       throw error;
     }

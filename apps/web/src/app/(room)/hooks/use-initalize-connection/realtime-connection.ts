@@ -1,6 +1,7 @@
 import Socket, { Socket as SocketType } from "socket.io-client";
 import { getSocketBaseUrl } from "../utils";
 import { EventType } from "../../../../../types";
+import { IGameResponse } from "../../../interface/GameStore";
 
 class RealTimeConnection {
   private socket?: SocketType;
@@ -13,7 +14,6 @@ class RealTimeConnection {
   private static connect(): SocketType {
     const socketUrl = getSocketBaseUrl();
     const socket: SocketType = Socket(socketUrl, { path: "/realtime" });
-    console.log("Connection established");
 
     return socket;
   }
@@ -36,15 +36,14 @@ class RealTimeConnection {
     this.gameState = gameState;
   }
 
-  private attachEventListener(eventType: EventType) {
-    return new Promise((res) => {
-      setTimeout(() => {
-        this.socket?.on(eventType, res);
-      }, 0);
-    });
+  private attachEventListener<T extends (...args: any[]) => any>(
+    eventType: EventType,
+    cb: T
+  ) {
+    return this.socket?.on(eventType, cb);
   }
 
-  private joinRoom = (roomInfo: {
+  private joinRoomCreateRoom = (roomInfo: {
     roomId: string;
     roomName: string;
   }): Promise<void> => {
@@ -56,31 +55,30 @@ class RealTimeConnection {
       this.isConnected = true;
       this.roomId = roomInfo.roomId;
 
-      setTimeout(() => {
-        this.socket?.emit("JOIN_ROOM", {
-          roomId: roomInfo.roomId,
-          roomName: roomInfo.roomName,
-        });
-        res();
+      this.socket.emit("JOIN_ROOM", {
+        roomId: roomInfo.roomId,
+        roomName: roomInfo.roomName,
+      });
+      res();
 
-        io.on("JOIN_FAIL", (e) => {
-          this.socket = undefined;
-          this.clientId = "";
-          this.isConnected = false;
+      io.on("JOIN_FAIL", (e) => {
+        this.socket = undefined;
+        this.clientId = "";
+        this.isConnected = false;
 
-          // @TODO: add retry logic here
-          rej({
-            isConnected: false,
-            errorMessage: e,
-          });
+        // @TODO: add retry logic here
+        rej({
+          isConnected: false,
+          errorMessage: e,
         });
-      }, 0);
+      });
     });
   };
 
   async updateGameState(payload: any) {
     console.log({ event: "SELECTING_LETTER", payload });
   }
+
   async establishConnection({
     roomId,
     roomName,
@@ -88,18 +86,13 @@ class RealTimeConnection {
     roomId: string;
     roomName: string;
   }) {
-    await this.joinRoom({ roomId, roomName })
-      .then(() => this.attachEventListener("JOIN_SUCCESS"))
-      .then(this.setGameState)
-      .catch((e) => {
-        console.error({ ERROR_CONNECTION: e });
-      });
+    await this.joinRoomCreateRoom({ roomId, roomName }).catch((e) => {
+      console.error({ ERROR_CONNECTION: e });
+    });
   }
 
-  async listenLetterSelect() {
-    await this.attachEventListener("SELECTED_LETTER").then(
-      this.updateGameState
-    );
+  onSelectedLetter(cb: any): any {
+    return this.attachEventListener("SELECTED_LETTER", cb);
   }
 
   disconnect() {
@@ -115,14 +108,10 @@ class RealTimeConnection {
     return this.clientId;
   }
 
-  async letterSelected(letter: string) {
+  letterSelected(letter: string) {
     this.sendMessage({
       type: "SELECTING_LETTER",
       payload: { letter, roomId: this.roomId },
-    });
-
-    this.attachEventListener("SELECTED_LETTER").then((letters) => {
-      console.log({ letters });
     });
   }
 

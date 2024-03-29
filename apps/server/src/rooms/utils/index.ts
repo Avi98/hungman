@@ -1,7 +1,7 @@
 import crypto from 'crypto';
 
 export const getAllLetters = () => {
-  const letters = 'abcdefghijklmnopqrstuvwxyz'.toUpperCase().split('');
+  const letters = 'abcdefghijklmnopqrstuvwxyz'.toLowerCase().split('');
   return letters;
 };
 

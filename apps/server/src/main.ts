@@ -7,10 +7,12 @@ async function bootstrap() {
   const appConfig = app.get(ConfigService);
   app.enableCors({
     //TODO remove in prod
-    origin: ['http://localhost:3000'],
+    origin: ['*'],
   });
-  const serverConfig = appConfig.get('BE_PORT') || '3030';
-  await app.listen(serverConfig);
-  console.log('BE server running on port ', serverConfig);
+
+  const port = appConfig.get('port');
+
+  await app.listen(port);
+  console.log('BE server running on port ', port);
 }
 bootstrap();
