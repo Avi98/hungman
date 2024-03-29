@@ -1,6 +1,7 @@
 import { AllLetters } from "../../components/letters/Keys";
 import { GameRoom } from "../../components/room";
 import { Title, Hangman, Card, Stack } from "@repo/ui";
+import { WordPlaceholder } from "../../components/word-placeholder";
 interface IRoom {
   params: {
     roomId: string;
@@ -21,7 +22,7 @@ const Room = (props: IRoom) => {
       >
         <Hangman />
       </Card>
-
+      <WordPlaceholder />
       <Card
         sx={{
           height: "19%",

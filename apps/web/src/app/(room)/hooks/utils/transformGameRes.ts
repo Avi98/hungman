@@ -21,7 +21,8 @@ export const transformGameRes = (
     remainingLetters: gameRes.remainingLetters,
     selectedLetters: gameRes.selectedLetters,
     turn: {
-      name: gameRes.whoseTurn || "",
+      // name: gameRes.whoseTurn || "",
+      name: "",
     },
   };
 };
