@@ -1,29 +1,28 @@
 import {
-  Column,
-  CreateDateColumn,
   Entity,
+  Column,
   PrimaryGeneratedColumn,
+  CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
 @Entity()
-export class User {
+export class Room {
   @PrimaryGeneratedColumn()
-  id: string;
+  id: number;
+
+  @Column()
+  owner: string;
 
   @Column({
     type: 'varchar',
     length: 150,
     unique: true,
   })
-  username: string;
+  room_name: string;
 
-  @Column({
-    type: 'varchar',
-    length: 150,
-    unique: true,
-  })
-  email: string;
+  @Column({ default: true })
+  isActive: boolean;
 
   @CreateDateColumn()
   created_at: Date;

@@ -1,3 +1,4 @@
 export const API_ENDPOINTS = {
-  GET_USER: "/user",
+  USER: "/user",
+  CREATE_USER: "/user/create",
 };

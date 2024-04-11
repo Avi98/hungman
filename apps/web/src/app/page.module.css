@@ -13,7 +13,7 @@
 
 .description {
   display: inherit;
-  justify-content: inherit;
+  justify-content: center;
   align-items: inherit;
   font-size: 0.85rem;
   max-width: var(--max-width);
@@ -94,7 +94,9 @@
   border-radius: var(--border-radius);
   background: rgba(var(--card-rgb), 0);
   border: 1px solid rgba(var(--card-border-rgb), 0);
-  transition: background 200ms, border 200ms;
+  transition:
+    background 200ms,
+    border 200ms;
 }
 
 .card span {
