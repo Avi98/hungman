@@ -1,27 +1,20 @@
-import {
-  ArgumentsHost,
-  Catch,
-  ConflictException,
-  ExceptionFilter,
-  HttpException,
-} from '@nestjs/common';
+import { ArgumentsHost, Catch, ConflictException } from '@nestjs/common';
 import { BaseExceptionFilter } from '@nestjs/core';
 import { buildHttpExceptionObject } from './exceptionObject';
 
 export const ErrorMap = new Map([
   ['EmailExists', (object) => new ConflictException(object)],
-  ['UsernameExistsUsernameExists', (object) => new ConflictException(object)],
+  ['UsernameExists', (object) => new ConflictException(object)],
 ]);
 
-@Catch(HttpException)
-export class HttpExceptionFilter extends BaseExceptionFilter {
+@Catch()
+export class ErrorExceptionMap extends BaseExceptionFilter {
   catch(exception: Error, host: ArgumentsHost) {
-    super.catch(HttpExceptionFilter.transformExceptions(exception), host);
+    super.catch(ErrorExceptionMap.transformExceptions(exception), host);
   }
 
   private static transformExceptions(error: Error) {
     const errorException = ErrorMap.get(error.name);
-
     const errorType = errorException(
       buildHttpExceptionObject(error.name, error.message),
     );

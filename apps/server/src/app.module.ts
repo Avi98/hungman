@@ -6,7 +6,6 @@ import { RoomModule } from './room/room.module';
 import { UserModule } from './user/user.module';
 import config from './utils/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { detectTsNode } from './utils/detectTsNode';
 
 @Module({
   imports: [
