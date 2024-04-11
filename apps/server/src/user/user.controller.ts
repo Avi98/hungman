@@ -1,14 +1,16 @@
-import { Body, Controller, Param, Post } from '@nestjs/common';
-import { RoomUserDto, UserDto } from './user.dto';
+import { Body, Controller, Param, Post, UseInterceptors } from '@nestjs/common';
+import { UserDto } from './user.dto';
 import { UserService } from './user.service';
+import { TransactionInterceptor } from '../interceptor/transaction.interceptor';
 
 @Controller('user')
 export class UserController {
   constructor(private userService: UserService) {}
 
   @Post()
-  createUser(@Body() user: UserDto) {
-    this.userService.createNewUser(user);
+  @UseInterceptors(TransactionInterceptor)
+  async createUser(@Body() user: UserDto) {
+    return await this.userService.createNewUser(user);
   }
 
   @Post('/user/:roomId')

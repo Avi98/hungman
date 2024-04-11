@@ -1,7 +1,14 @@
 export abstract class APIBuilder {
   private readonly targetUrl: string;
   protected requestBody?: BodyInit;
-  private customRequestHeaders = {};
+  protected customRequestHeaders = new Headers({
+    // mode: "cors",
+    cache: "no-cache",
+    // credentials: "same-origin",
+    redirect: "follow",
+    referrerPolicy: "no-referrer",
+    // "Content-Type": "application/x-www-form-urlencoded",
+  });
 
   constructor(endpoint: string, baseUrl: string) {
     this.targetUrl = `${baseUrl}${endpoint}`;
@@ -14,12 +21,19 @@ export abstract class APIBuilder {
       method: httpMethod,
       headers: this.customRequestHeaders,
       body: this.requestBody,
-    });
+    })
+      .then((res) => res.json())
+      .catch((e) => {
+        throw e;
+      });
 
     return response;
   }
 
-  withBody(BodyData: BodyInit) {
-    this.requestBody = BodyData;
+  protected withHeader(name: string, value: string) {
+    this.customRequestHeaders.set(name, value);
+  }
+  withBody<TBody extends object>(BodyData: TBody) {
+    this.requestBody = JSON.stringify(BodyData);
   }
 }

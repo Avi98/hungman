@@ -1,27 +1,27 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { User } from './user.entity';
 import { RoomUserDto, UserDto } from './user.dto';
-import { Repository } from 'typeorm';
 import { EmailExists, UsernameExists } from '../error/errors';
 import { RoomService } from '../room/room.service';
+import { UserRepository } from './user.repository';
 
 @Injectable()
 export class UserService {
   constructor(
-    @InjectRepository(User)
-    private userRepository: Repository<User>,
+    private userRepository: UserRepository,
     private roomUserService: RoomService,
   ) {}
 
   private async duplicateUser(userInfo: UserDto) {
-    const emailExists = await this.userRepository.findOne({
-      where: { email: userInfo.email },
-    });
-    const usernameExists = await this.userRepository.findOne({ where: {} });
+    const emailExists = await this.userRepository.getUserByEmail(
+      userInfo.email,
+    );
+    const usernameExists = await this.userRepository.getUserByUsername(
+      userInfo.username,
+    );
 
-    if (emailExists) throw new EmailExists();
-    if (usernameExists) throw new UsernameExists();
+    if (emailExists.length) throw new EmailExists('Email already exists');
+    if (usernameExists.length)
+      throw new UsernameExists('Username already exists');
 
     return false;
   }
@@ -43,10 +43,9 @@ export class UserService {
   async createNewUser(userInfo: UserDto) {
     try {
       const isDuplicate = await this.duplicateUser(userInfo);
-
       if (!isDuplicate) {
-        const user = this.userRepository.create(userInfo);
-        return await this.userRepository.save(user);
+        const user = await this.userRepository.create(userInfo);
+        return user;
       }
     } catch (error) {
       if (error instanceof EmailExists || error instanceof UsernameExists) {
