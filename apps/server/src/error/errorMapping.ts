@@ -1,10 +1,18 @@
-import { ArgumentsHost, Catch, ConflictException } from '@nestjs/common';
+import {
+  ArgumentsHost,
+  Catch,
+  ConflictException,
+  BadRequestException,
+} from '@nestjs/common';
 import { BaseExceptionFilter } from '@nestjs/core';
 import { buildHttpExceptionObject } from './exceptionObject';
 
 export const ErrorMap = new Map([
   ['EmailExists', (object) => new ConflictException(object)],
   ['UsernameExists', (object) => new ConflictException(object)],
+  ['RoomNameExists', (object) => new ConflictException(object)],
+  ['RoomNotFound', (object) => new BadRequestException(object)],
+  ['RoomMemberExists', (object) => new BadRequestException(object)],
 ]);
 
 @Catch()
