@@ -8,7 +8,7 @@ import { UserRepository } from './user.repository';
 export class UserService {
   constructor(
     private userRepository: UserRepository,
-    private roomUserService: RoomService,
+    private roomService: RoomService,
   ) {}
 
   private async duplicateUser(userInfo: UserDto) {
@@ -28,12 +28,12 @@ export class UserService {
 
   async addMemberToRoom(userInfo: RoomUserDto) {
     try {
-      const user = await this.createNewUser({
+      const user = await this.userRepository.create({
         username: userInfo.username,
         email: userInfo.email,
       });
       if (user) {
-        await this.roomUserService.createRoomUser(user, userInfo.roomId);
+        await this.roomService.addMember(user, userInfo.roomId);
       }
     } catch (error) {
       throw error;
@@ -45,12 +45,15 @@ export class UserService {
       const isDuplicate = await this.duplicateUser(userInfo);
       if (!isDuplicate) {
         const user = await this.userRepository.create(userInfo);
+
+        await this.roomService.create(user, userInfo.roomName);
         return user;
       }
     } catch (error) {
       if (error instanceof EmailExists || error instanceof UsernameExists) {
         throw error;
       }
+      throw error;
     }
   }
 }

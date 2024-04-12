@@ -4,15 +4,17 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  ManyToOne,
 } from 'typeorm';
+import { User } from '../user/user.entity';
 
 @Entity()
 export class Room {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  owner: string;
+  @ManyToOne(() => User, (user) => user.rooms)
+  owner: User;
 
   @Column({
     type: 'varchar',

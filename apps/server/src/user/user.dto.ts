@@ -6,6 +6,10 @@ export class UserDto {
   @IsString()
   username: string;
 
+  @Type(() => String)
+  @IsString()
+  roomName: string;
+
   @IsString()
   email: string;
 }
