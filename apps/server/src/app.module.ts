@@ -6,6 +6,9 @@ import { RoomModule } from './room/room.module';
 import { UserModule } from './user/user.module';
 import config from './utils/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { User } from './user/user.entity';
+import { Room } from './room/room.entity';
+import { RoomUser } from './room/room-user.entity';
 
 @Module({
   imports: [
@@ -16,10 +19,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
-      autoLoadEntities: true,
+      // autoLoadEntities: true,
+      entities: [User, Room, RoomUser],
       //Todo: for production this should be false
       synchronize: true,
       logger: 'advanced-console',
+      logging: ['query'],
       //TODO: enable this for production app
       // migrationsRun: true,
       // migrations: [

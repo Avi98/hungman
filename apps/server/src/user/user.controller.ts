@@ -14,6 +14,7 @@ export class UserController {
   }
 
   @Post('/user/:roomId')
+  @UseInterceptors(TransactionInterceptor)
   addUserToRoom(@Body() userRoom: UserDto, @Param('roomId') roomId: string) {
     this.userService.addMemberToRoom({ ...userRoom, roomId });
   }

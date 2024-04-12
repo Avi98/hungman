@@ -2,9 +2,11 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Room } from '../room/room.entity';
 
 @Entity()
 export class User {
@@ -24,6 +26,9 @@ export class User {
     unique: true,
   })
   email: string;
+
+  @OneToMany(() => Room, (room) => room.owner)
+  rooms: Room[];
 
   @CreateDateColumn()
   created_at: Date;

@@ -36,7 +36,7 @@ export class UserRepository extends BaseRepository {
     }
   }
 
-  create(userInfo: UserDto) {
+  create(userInfo: { username: string; email: string }) {
     this.userRepository = this.getRepository(User);
 
     const user = this.userRepository.create(userInfo);
