@@ -46,8 +46,15 @@ export class UserService {
       if (!isDuplicate) {
         const user = await this.userRepository.create(userInfo);
 
-        await this.roomService.create(user, userInfo.roomName);
-        return user;
+        const room = await this.roomService.create(user, userInfo.roomName);
+
+        return {
+          ...user,
+          roomId: room.id,
+          roomName: room.room_name,
+          isRoomActive: room.isActive,
+          room: room.room_users,
+        };
       }
     } catch (error) {
       if (error instanceof EmailExists || error instanceof UsernameExists) {

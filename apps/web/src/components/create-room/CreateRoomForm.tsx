@@ -6,7 +6,7 @@ import { SyntheticEvent } from "react";
 import { useSaveUser } from "../../api/createUser";
 
 export const CreateRoomForm = () => {
-  const { saveUser, error } = useSaveUser();
+  const { saveUser, error, isSuccess, isPending, data } = useSaveUser();
 
   const handleSubmit = async (event: SyntheticEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -14,10 +14,23 @@ export const CreateRoomForm = () => {
     const userInfo = {
       email: target.elements.email.value,
       username: target.elements.username.value,
+      roomName: target.elements.roomName.value,
     };
 
     saveUser(userInfo);
+    console.log({ data });
+    if (isSuccess) {
+      route.push(`/room/${data?.roomId}`);
+    }
   };
+
+  if (isPending) {
+    <div>loading....</div>;
+  }
+
+  if (error) {
+    <div>{`ERROR: ${error}`}</div>;
+  }
   return (
     <form onSubmit={handleSubmit}>
       <FlexCol>
