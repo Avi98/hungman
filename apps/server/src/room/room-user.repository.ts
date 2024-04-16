@@ -5,6 +5,8 @@ import { REQUEST } from '@nestjs/core';
 import { Request } from 'express';
 import { RoomUser } from './room-user.entity';
 import { UserRole } from '../enums/user-role-enum';
+import { Room } from './room.entity';
+import { User } from '../user/user.entity';
 
 @Injectable({ scope: Scope.REQUEST })
 export class RoomUserRepository extends BaseRepository {
@@ -12,20 +14,20 @@ export class RoomUserRepository extends BaseRepository {
     super(dataSource, request);
   }
 
-  async addMember(roomId: string, userId: string) {
+  async addMember(room: Room, user: User) {
     const roomMember = this.getRepository(RoomUser).create({
-      room_id: roomId,
-      user_id: userId,
-      user_role: UserRole.MEMBER,
+      room,
+      user,
+      userRole: UserRole.MEMBER,
     });
 
     return await this.getRepository(RoomUser).save(roomMember);
   }
 
-  async getRoomMember(roomId: string, userId: string) {
+  async getRoomMember(room: Room, user: User) {
     return await this.getRepository(RoomUser).findOneBy({
-      room_id: roomId,
-      user_id: userId,
+      room,
+      user,
     });
   }
 }

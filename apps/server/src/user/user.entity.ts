@@ -7,6 +7,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Room } from '../room/room.entity';
+import { RoomUser } from '../room/room-user.entity';
 
 @Entity()
 export class User {
@@ -29,6 +30,9 @@ export class User {
 
   @OneToMany(() => Room, (room) => room.owner)
   rooms: Room[];
+
+  @OneToMany(() => RoomUser, (roomUser) => roomUser.user)
+  roomMember: RoomUser[];
 
   @CreateDateColumn()
   created_at: Date;

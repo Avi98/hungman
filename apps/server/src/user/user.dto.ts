@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsString } from 'class-validator';
+import { IsEmail, IsString } from 'class-validator';
 
 export class UserDto {
   @Type(() => String)
@@ -10,12 +10,20 @@ export class UserDto {
   @IsString()
   roomName: string;
 
-  @IsString()
+  @IsEmail()
   email: string;
 }
 
-export interface RoomUserDto {
-  roomId: string;
+export class RoomUserDto {
+  @Type(() => String)
+  @IsString()
   username: string;
+
+  @Type(() => String)
+  @IsEmail()
   email: string;
+
+  @Type(() => String)
+  @IsString()
+  roomId: string;
 }

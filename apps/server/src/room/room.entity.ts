@@ -5,8 +5,10 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne,
+  OneToMany,
 } from 'typeorm';
 import { User } from '../user/user.entity';
+import { RoomUser } from './room-user.entity';
 
 @Entity()
 export class Room {
@@ -25,6 +27,9 @@ export class Room {
 
   @Column({ default: true })
   isActive: boolean;
+
+  @OneToMany(() => RoomUser, (roomUser) => roomUser.room)
+  room_users: string;
 
   @CreateDateColumn()
   created_at: Date;

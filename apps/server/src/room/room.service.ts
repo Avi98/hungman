@@ -20,8 +20,8 @@ export class RoomService {
     if (!room) throw new RoomNotFound(`roomId: ${roomId} not found`);
 
     const roomMemberExists = await this.roomUserRepository.getRoomMember(
-      roomId,
-      user.id,
+      room,
+      user,
     );
 
     if (roomMemberExists)
@@ -29,7 +29,7 @@ export class RoomService {
         `memberId: ${user.id} already added to roomId: ${roomId}`,
       );
 
-    await this.roomUserRepository.addMember(roomId, user.id);
+    await this.roomUserRepository.addMember(room, user);
   }
 
   async create(user: User, roomName: string) {

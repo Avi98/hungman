@@ -5,27 +5,30 @@ import {
   UpdateDateColumn,
   CreateDateColumn,
   Unique,
+  ManyToOne,
 } from 'typeorm';
 import { UserRole } from '../enums/user-role-enum';
+import { User } from '../user/user.entity';
+import { Room } from './room.entity';
 
 @Entity()
-@Unique(['user_id', 'room_id'])
+@Unique(['user', 'room'])
 export class RoomUser {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  user_id: string;
+  @ManyToOne(() => User, (user) => user.roomMember)
+  user: User;
 
   @Column({
     type: 'enum',
     enum: UserRole,
     default: UserRole.MEMBER,
   })
-  user_role: UserRole;
+  userRole: UserRole;
 
-  @Column()
-  room_id: string;
+  @ManyToOne(() => Room, (room) => room.room_users)
+  room: Room;
 
   @CreateDateColumn()
   created_at: Date;
