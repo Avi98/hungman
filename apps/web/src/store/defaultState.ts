@@ -4,7 +4,11 @@ const defaultState = {
   isConnected: false,
   currRoom: {
     roomName: "",
-    currUser: {},
+    currUser: {
+      username: "",
+      userId: "",
+      email: "",
+    },
     allUsers: [
       {
         name: "",
