@@ -38,3 +38,15 @@ yarn-error.log*
 # Misc
 .DS_Store
 *.pem
+env
+aws.secrets
+
+# AWS-CDK
+*.js
+!jest.config.js
+*.d.ts
+node_modules
+
+# CDK asset staging directory
+.cdk.staging
+cdk.out

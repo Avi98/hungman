@@ -1,4 +1,5 @@
-import { GameRoom } from "../../components/GameRoom";
+import { RoomGuard } from "../../../../gaurds/RoomGaurd";
+import { GameRoom } from "./component/GameRoom";
 interface IRoom {
   params: {
     roomId: string;
@@ -7,10 +8,9 @@ interface IRoom {
 
 const Room = (props: IRoom) => {
   return (
-    <div style={{ width: "400px", height: "400px" }}>
-      room id:{`${props.params.roomId}`}
+    <RoomGuard>
       <GameRoom />
-    </div>
+    </RoomGuard>
   );
 };
 

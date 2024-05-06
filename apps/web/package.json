@@ -4,17 +4,20 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build && NODE_ENV=production",
     "start": "next start",
     "lint": "eslint . --max-warnings 0"
   },
   "dependencies": {
+    "@emotion/styled": "^11.11.0",
+    "@fontsource/roboto": "^5.0.8",
     "@repo/ui": "workspace:*",
     "@tanstack/react-query": "^5.17.15",
     "next": "^14.0.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "socket.io-client": "^4.7.4"
+    "socket.io-client": "^4.7.4",
+    "zustand": "^4.5.0"
   },
   "devDependencies": {
     "@next/eslint-plugin-next": "^14.0.4",

@@ -9,6 +9,9 @@
     "lint": {
       "dependsOn": ["^lint"]
     },
+    "infra#watch": {
+      "dependsOn": []
+    },
     "dev": {
       "cache": false,
       "persistent": true

@@ -1,25 +1,33 @@
 import {
-  ConnectedSocket,
   MessageBody,
   OnGatewayConnection,
-  OnGatewayDisconnect,
   SubscribeMessage,
   WebSocketGateway,
-  WebSocketServer,
 } from '@nestjs/websockets';
+import { IncomingMessage } from 'http';
 import { Socket } from 'socket.io';
+import { RoomEventHandler } from './room-event-handler';
+import { WordBankService } from '../word-bank/word-bank.service';
 
 @WebSocketGateway({
   //@TODO: extract this
-  cors: { origin: 'http://localhost:3000' },
+  cors: { origin: '*' },
   path: '/realtime',
+  // transports: ['websocket'],
 })
-export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
-  @WebSocketServer() server;
+export class SocketGateway implements OnGatewayConnection {
+  private eventHandler: RoomEventHandler;
 
-  handleConnection(socket: Socket): void {
-    const socketId = socket.id;
-    console.log(`New connecting... socket id:`, socketId);
+  constructor(private wordBank: WordBankService) {}
+
+  async handleConnection(client: Socket, requestMessage: IncomingMessage) {
+    const socketId = client.id;
+    console.log(`New connection... socket id:`, socketId);
+
+    this.eventHandler = await RoomEventHandler.initializeRoomEventHandler(
+      client,
+      this.wordBank,
+    );
   }
 
   handleDisconnect(socket: Socket): void {
@@ -27,27 +35,13 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
     console.log(`Disconnection... socket id:`, socketId);
   }
 
-  @SubscribeMessage('message')
-  onParticipate(@ConnectedSocket() socket: Socket, @MessageBody() data: any) {
-    const socketId = socket.id;
-    console.log({ serverListern: data });
+  @SubscribeMessage('JOIN_ROOM')
+  async addRoom(@MessageBody() roomInfo: { roomId: string; roomName: string }) {
+    await this.eventHandler.addRoom(roomInfo);
   }
 
-  @SubscribeMessage('key-pressed')
-  sendEvent(clinet: Socket, data) {
-    console.log({ serverDataOnClick: data });
-    clinet.emit('testServerMessage', { data: 'server Message' }, (data) =>
-      console.log({ sent: data }),
-    );
+  @SubscribeMessage('SELECTING_LETTER')
+  handleLetterSelect(@MessageBody() data: { letter: string; roomId: string }) {
+    this.eventHandler.letterSelected(data.roomId, data.letter);
   }
-  // @SubscribeMessage('exchanges')
-  // async onMessage(socket: Socket, message: any) {
-  //   const socketId = socket.id;
-  //   message.socketId = socketId;
-  //   console.log(
-  //     'Received new message... socketId: %s, message: ',
-  //     socketId,
-  //     message,
-  //   );
-  // }
 }

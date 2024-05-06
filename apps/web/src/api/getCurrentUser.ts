@@ -4,13 +4,13 @@ import { GetAPIBuilder } from "./common/getAPIBuilder";
 import { API_ENDPOINTS } from "./constants";
 
 const getCurrentUser = () => {
-  const api = new GetAPIBuilder(API_ENDPOINTS.GET_USER, env.BE_BASE_URL);
+  const api = new GetAPIBuilder(API_ENDPOINTS.USER, env.BE_BASE_URL);
   return api.sendRequest();
 };
 
 export const useGetCurrentUser = () => {
   const { data, isLoading, error } = useQuery({
-    queryKey: [API_ENDPOINTS.GET_USER],
+    queryKey: [API_ENDPOINTS.USER],
     queryFn: getCurrentUser,
   });
 

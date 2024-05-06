@@ -2,14 +2,16 @@
   "name": "hungman",
   "private": true,
   "scripts": {
-    "build": "turbo build",
-    "dev": "turbo dev",
+    "build": "dotenv -c production turbo build",
+    "dev": "dotenv -c development turbo dev",
     "lint": "turbo lint",
+    "watch-infra": "turbo run watch",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
+    "dotenv-cli": "^7.4.1",
     "eslint-plugin-react-hooks": "^4.6.0",
     "prettier": "^3.1.1",
     "turbo": "latest"

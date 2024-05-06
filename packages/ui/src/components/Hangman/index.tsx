@@ -16,6 +16,8 @@ const Hangman = () => {
       viewBox="0 0 150 200"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
+      height={"100%"}
+      width={"100%"}
     >
       <Head />
       <HangmanBody />

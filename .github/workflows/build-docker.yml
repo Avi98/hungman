@@ -1,0 +1,50 @@
+name: Build-images
+
+# TODO
+# 1. Parrelled jobs
+# 2. single envs, share steps output and reuse it
+# 3. only run jobs if file has changed
+# 4. ignore change in infra repo
+permissions:
+  id-token: write
+  contents: read
+
+on:
+  push:
+    branches:
+      - develop
+      - master
+
+jobs:
+  build-image:
+    name: build frontend docker images
+    runs-on: ubuntu-latest
+    environment: AWS
+
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v2
+
+      - name: login to aws
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_SECRET_ROLE }}
+          aws-region: ${{ secrets.AWS_SECRET_REGION }}
+
+      - name: Login to ECR
+        id: ecr-login
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build and push backend image to ECR
+        env:
+          ECR_REPOSITORY: ${{ secrets.AWS_ECR_REPOSITORY }}
+        run: |
+          docker build -f "./apps/server/Dockerfile" -t $ECR_REPOSITORY/hangman:server . 
+          docker push $ECR_REPOSITORY/hangman:server
+
+      - name: Build and push frontend image to ECR
+        env:
+          ECR_REPOSITORY: ${{ secrets.AWS_ECR_REPOSITORY }}
+        run: |
+          docker build -f "./apps/web/Dockerfile" -t $ECR_REPOSITORY/hangman:web .
+          docker push $ECR_REPOSITORY/hangman:web
