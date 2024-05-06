@@ -4,9 +4,14 @@ import { Box } from "@repo/ui";
 import { FlexCol } from "./style";
 import { SyntheticEvent } from "react";
 import { useSaveUser } from "../../api/createUser";
+import { useRouter } from "next/navigation";
+import { useHangmanStore } from "../../store/use-hangman-store";
 
 export const CreateRoomForm = () => {
-  const { saveUser, error, isSuccess, isPending, data } = useSaveUser();
+  const { saveUser, error, isPending, data } = useSaveUser();
+  const addUserToStore = useHangmanStore((state) => state.addNewUser);
+
+  const router = useRouter();
 
   const handleSubmit = async (event: SyntheticEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -17,11 +22,10 @@ export const CreateRoomForm = () => {
       roomName: target.elements.roomName.value,
     };
 
-    saveUser(userInfo);
-    console.log({ data });
-    if (isSuccess) {
-      route.push(`/room/${data?.roomId}`);
-    }
+    saveUser(userInfo).then(({ roomId, ...rest }) => {
+      router.push(`/room/${roomId}`);
+      addUserToStore(rest);
+    });
   };
 
   if (isPending) {

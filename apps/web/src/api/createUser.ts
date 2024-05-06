@@ -11,7 +11,7 @@ const createUser = (userInfo: IUserInfo) => {
   const api = new PostAPIBuilder(API_ENDPOINTS.USER, env.BE_BASE_URL);
   api.withBody(userInfo);
 
-  return api.sendRequest();
+  return api.sendRequest<{ roomId: string }>();
 };
 
 export const useSaveUser = (onError?: (...args: any[]) => unknown) => {
@@ -19,8 +19,8 @@ export const useSaveUser = (onError?: (...args: any[]) => unknown) => {
     data,
     error,
     isSuccess,
-    mutate: saveUser,
     isPending,
+    mutateAsync: saveUser,
   } = useMutation({
     onError,
     mutationFn: createUser,

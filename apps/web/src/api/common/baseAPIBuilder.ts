@@ -14,9 +14,9 @@ export abstract class APIBuilder {
     this.targetUrl = `${baseUrl}${endpoint}`;
   }
 
-  protected async sendRequestAndVerifyResponse(
+  protected async sendRequestAndVerifyResponse<TResponse>(
     httpMethod: RequestInit["method"]
-  ): Promise<Response> {
+  ): Promise<TResponse> {
     const response = await fetch(this.targetUrl, {
       method: httpMethod,
       headers: this.customRequestHeaders,
