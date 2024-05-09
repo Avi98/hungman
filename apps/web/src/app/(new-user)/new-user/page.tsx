@@ -1,5 +1,15 @@
+import { Stack, Title } from "@repo/ui";
+import { AddUserForm } from "./components/AddUserForm";
+// import { useAddUserController } from "./components/AddUserController/useAddUserController";
+
 const NewUser = () => {
-  return <div>hi new user</div>;
+  // useAddUserController();
+  return (
+    <Stack>
+      <Title>Welcome to hangman</Title>
+      <AddUserForm />
+    </Stack>
+  );
 };
 
 export default NewUser;

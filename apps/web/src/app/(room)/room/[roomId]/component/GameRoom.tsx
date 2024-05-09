@@ -26,7 +26,7 @@ export const GameRoom = () => {
       >
         <AllLetters />
       </Card>
-      <GameRoom />
+      {/* <GameRoom /> */}
     </Stack>
   );
 };
